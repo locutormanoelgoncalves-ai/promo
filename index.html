@@ -3,196 +3,439 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goodtimes Party - Anos 80</title>
+    <title>EstúdioVoz | Gravações Express</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
-        .hero-bg { background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 50%, #831843 100%); }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .voice-card.selected { border-color: #4f46e5; background-color: #e0e7ff; }
+        .music-card.selected { border-color: #4f46e5; background-color: #e0e7ff; }
+        textarea::-webkit-scrollbar { width: 8px; }
+        textarea::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+        .loader { border-top-color: #4f46e5; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
+        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="min-h-screen pb-12">
+<body class="text-slate-800">
 
-    <script>
-        // 1. COLE A URL DO SEU SCRIPT AQUI (após publicar como App da Web)
-        const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbzPxKG4T-xgZ5McqlUJA8TjMNYobc2J3O605-qVyhFGSo9hwgg3uwlwp5Cc3idaJUrBbA/exec"; 
-        const TOTAL_TICKETS = 50;
-        const PIX_KEY = "pix@manoelgoncalves.com.br";
-    </script>
-
-    <!-- Hero -->
-    <div class="hero-bg h-64 md:h-80 flex flex-col items-center justify-center text-center px-4 relative overflow-hidden">
-        <div class="relative z-10">
-            <h1 class="text-5xl md:text-7xl font-black italic tracking-tighter mb-2">GOODTIMES <span class="text-pink-500">PARTY</span></h1>
-            <p class="text-lg md:text-xl font-medium text-purple-200 uppercase tracking-widest">As melhores musica dos anos 80!</p>
-        </div>
-    </div>
-
-    <main class="max-w-xl mx-auto px-4 -mt-12 relative z-20">
-        <!-- Status e Preço -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div class="md:col-span-2 bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-2xl">
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-slate-400 font-bold uppercase text-xs tracking-widest">Ingressos Online</span>
-                    <span id="counter" class="text-3xl font-black text-indigo-400">--</span>
-                </div>
-                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                    <div id="progress" class="h-full bg-indigo-500 transition-all duration-1000" style="width: 100%"></div>
-                </div>
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2 text-indigo-600 font-black text-xl tracking-tight">
+                <i data-lucide="mic" class="fill-current"></i> EstúdioVoz Express
             </div>
-            <div class="bg-pink-600 rounded-3xl p-6 flex flex-col items-center justify-center shadow-xl">
-                <p class="text-[10px] font-black uppercase text-pink-200">Antecipado</p>
-                <p class="text-3xl font-black">R$ 10</p>
+            <div class="text-sm font-semibold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full hidden sm:flex items-center gap-2">
+                <i data-lucide="clock" class="w-4 h-4"></i> Entrega em até 30 minutos*
             </div>
         </div>
+    </header>
 
-        <!-- Formulário -->
-        <div id="form-container" class="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-2xl">
-            <h3 class="text-2xl font-bold mb-8 flex items-center gap-3">
-                <div class="w-1.5 h-6 bg-pink-500 rounded-full"></div>
-                Seus Dados
-            </h3>
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-8 grid lg:grid-cols-3 gap-8">
+        
+        <!-- Left Column: Editor -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-xl font-bold mb-1 flex items-center gap-2">
+                    <span class="bg-indigo-100 text-indigo-600 w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span> 
+                    Digite seu Texto
+                </h2>
+                <p class="text-sm text-slate-500 mb-4">Cole o texto do seu anúncio. Máximo de 120 palavras.</p>
+                
+                <textarea id="text-input" class="w-full h-40 p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none transition text-slate-700" placeholder="Cole aqui o seu roteiro... Ex: Aproveite as ofertas deste fim de semana na nossa loja!"></textarea>
+                
+                <div class="flex justify-between items-center mt-2 text-xs font-medium">
+                    <span id="word-count" class="text-slate-500 font-bold px-2 py-1 bg-slate-100 rounded">0 / 120 palavras</span>
+                    <span class="text-slate-400">Ponto e vírgula contam na pausa.</span>
+                </div>
+            </div>
 
-            <form id="ticket-form" class="space-y-5">
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-xs font-bold text-slate-500 uppercase ml-1">Nome Completo</label>
-                        <input required type="text" id="nome" class="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 px-4 outline-none focus:border-indigo-500 text-white">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-xl font-bold mb-1 flex items-center gap-2">
+                    <span class="bg-indigo-100 text-indigo-600 w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span> 
+                    Escolha a Voz
+                </h2>
+                <p class="text-sm text-slate-500 mb-4">Vozes digitais humanizadas de alta qualidade.</p>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Locutora Francisca -->
+                    <div class="voice-card selected border-2 border-slate-200 rounded-xl p-4 cursor-pointer hover:border-indigo-300 transition" onclick="selectVoice(this, 'Feminina')">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-pink-600">
+                                <i data-lucide="user"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold">Locutora Francisca</h3>
+                                <p class="text-xs text-slate-500">Padrão Varejo</p>
+                            </div>
+                        </div>
+                        <button class="w-full mt-2 py-1.5 bg-white border border-slate-200 rounded text-xs font-semibold hover:bg-slate-50 flex items-center justify-center gap-1" onclick="event.stopPropagation(); playDemo('demo-fem')">
+                            <i data-lucide="play" class="w-3 h-3"></i> Ouvir Exemplo
+                        </button>
+                        <audio id="demo-fem" src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2023/06/AUDIO-02-E-MEIO-DE-5-LEONARDO2.mp3"></audio>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-xs font-bold text-slate-500 uppercase ml-1">WhatsApp</label>
-                            <input required type="tel" id="whatsapp" placeholder="55..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 px-4 text-white">
+
+                    <!-- Locutor Carlos -->
+                    <div class="voice-card border-2 border-slate-200 rounded-xl p-4 cursor-pointer hover:border-indigo-300 transition" onclick="selectVoice(this, 'Masculina')">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                                <i data-lucide="user"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold">Locutor Carlos</h3>
+                                <p class="text-xs text-slate-500">Padrão Impacto</p>
+                            </div>
                         </div>
-                        <div>
-                            <label class="text-xs font-bold text-slate-500 uppercase ml-1">E-mail</label>
-                            <input required type="email" id="email" class="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 px-4 text-white">
-                        </div>
+                        <button class="w-full mt-2 py-1.5 bg-white border border-slate-200 rounded text-xs font-semibold hover:bg-slate-50 flex items-center justify-center gap-1" onclick="event.stopPropagation(); playDemo('demo-masc')">
+                            <i data-lucide="play" class="w-3 h-3"></i> Ouvir Exemplo
+                        </button>
+                        <audio id="demo-masc" src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/untitled_Locutor-Manoel-Goncalves_2026-05-03-23_29_15.mp3"></audio>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-xl font-bold mb-1 flex items-center gap-2">
+                    <span class="bg-indigo-100 text-indigo-600 w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span> 
+                    Trilha Sonora (Opcional)
+                </h2>
+                <p class="text-sm text-slate-500 mb-4">Música de fundo mixada junto com a voz.</p>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <!-- Sem Trilha -->
+                    <div class="music-card selected border-2 border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-indigo-300 transition flex flex-col justify-center" onclick="selectMusic(this, 'Nenhuma')">
+                        <i data-lucide="mic-off" class="mx-auto mb-2 text-slate-400 w-5 h-5"></i>
+                        <span class="text-sm font-semibold text-slate-600">Sem Trilha</span>
+                    </div>
+
+                    <!-- Trilha 01 -->
+                    <div class="music-card border-2 border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-indigo-300 transition flex flex-col" onclick="selectMusic(this, 'Trilha 01')">
+                        <i data-lucide="music" class="mx-auto mb-2 text-indigo-500 w-5 h-5"></i>
+                        <span class="text-sm font-semibold mb-2">Trilha 01</span>
+                        <button class="mt-auto w-full py-1.5 bg-white border border-slate-200 rounded text-xs font-semibold hover:bg-slate-50 flex items-center justify-center gap-1" onclick="event.stopPropagation(); playDemo('demo-trilha-1')">
+                            <i data-lucide="play" class="w-3 h-3"></i> Ouvir
+                        </button>
+                        <audio id="demo-trilha-1" src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/TRILHA-PARA-COMERCIAL-Canal-Dany-Alves-Locutora-13.mp3"></audio>
+                    </div>
+
+                    <!-- Trilha 02 -->
+                    <div class="music-card border-2 border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-indigo-300 transition flex flex-col" onclick="selectMusic(this, 'Trilha 02')">
+                        <i data-lucide="music" class="mx-auto mb-2 text-blue-500 w-5 h-5"></i>
+                        <span class="text-sm font-semibold mb-2">Trilha 02</span>
+                        <button class="mt-auto w-full py-1.5 bg-white border border-slate-200 rounded text-xs font-semibold hover:bg-slate-50 flex items-center justify-center gap-1" onclick="event.stopPropagation(); playDemo('demo-trilha-2')">
+                            <i data-lucide="play" class="w-3 h-3"></i> Ouvir
+                        </button>
+                        <audio id="demo-trilha-2" src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/TRILHA-PARA-COMERCIAL-Canal-Dany-Alves-Locutora-12.mp3"></audio>
+                    </div>
+
+                    <!-- Trilha 03 -->
+                    <div class="music-card border-2 border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-indigo-300 transition flex flex-col" onclick="selectMusic(this, 'Trilha 03')">
+                        <i data-lucide="music" class="mx-auto mb-2 text-emerald-500 w-5 h-5"></i>
+                        <span class="text-sm font-semibold mb-2">Trilha 03</span>
+                        <button class="mt-auto w-full py-1.5 bg-white border border-slate-200 rounded text-xs font-semibold hover:bg-slate-50 flex items-center justify-center gap-1" onclick="event.stopPropagation(); playDemo('demo-trilha-3')">
+                            <i data-lucide="play" class="w-3 h-3"></i> Ouvir
+                        </button>
+                        <audio id="demo-trilha-3" src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/Bed_Airy_Bass_Beat.mp3"></audio>
+                    </div>
+
+                    <!-- Trilha 04 -->
+                    <div class="music-card border-2 border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-indigo-300 transition flex flex-col" onclick="selectMusic(this, 'Trilha 04')">
+                        <i data-lucide="music" class="mx-auto mb-2 text-purple-500 w-5 h-5"></i>
+                        <span class="text-sm font-semibold mb-2">Trilha 04</span>
+                        <button class="mt-auto w-full py-1.5 bg-white border border-slate-200 rounded text-xs font-semibold hover:bg-slate-50 flex items-center justify-center gap-1" onclick="event.stopPropagation(); playDemo('demo-trilha-4')">
+                            <i data-lucide="play" class="w-3 h-3"></i> Ouvir
+                        </button>
+                        <audio id="demo-trilha-4" src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/TRILHA-PARA-COMERCIAL-Canal-Dany-Alves-Locutora-7.mp3"></audio>
+                    </div>
+
+                    <!-- Trilha 05 -->
+                    <div class="music-card border-2 border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-indigo-300 transition flex flex-col" onclick="selectMusic(this, 'Trilha 05')">
+                        <i data-lucide="music" class="mx-auto mb-2 text-pink-500 w-5 h-5"></i>
+                        <span class="text-sm font-semibold mb-2">Trilha 05</span>
+                        <button class="mt-auto w-full py-1.5 bg-white border border-slate-200 rounded text-xs font-semibold hover:bg-slate-50 flex items-center justify-center gap-1" onclick="event.stopPropagation(); playDemo('demo-trilha-5')">
+                            <i data-lucide="play" class="w-3 h-3"></i> Ouvir
+                        </button>
+                        <audio id="demo-trilha-5" src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/TRILHA-PARA-COMERCIAL-Canal-Dany-Alves-Locutora-2.mp3"></audio>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Summary & Checkout -->
+        <div class="lg:col-span-1">
+            <!-- Resumo -->
+            <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl sticky top-24" id="checkout-panel">
+                <h3 class="text-xl font-bold mb-4 border-b border-slate-700 pb-4">Resumo do Pedido</h3>
+                
+                <ul class="space-y-3 mb-6 text-sm text-slate-300">
+                    <li class="flex justify-between"><span>Voz:</span> <strong class="text-white" id="summary-voice">Locutora Francisca</strong></li>
+                    <li class="flex justify-between"><span>Trilha Sonora:</span> <strong class="text-white" id="summary-music">Nenhuma</strong></li>
+                    <li class="flex justify-between"><span>Tamanho:</span> <strong class="text-emerald-400 font-bold" id="summary-words">0 palavras</strong></li>
+                </ul>
+
+                <div class="flex justify-between items-end mb-6">
+                    <span class="text-slate-400 text-sm">Valor Único</span>
+                    <div class="text-right">
+                        <span class="text-sm text-slate-400 line-through">R$ 29,90</span>
+                        <div class="text-3xl font-black text-emerald-400">R$ 9,90</div>
                     </div>
                 </div>
 
-                <div class="pt-6 mt-6 border-t border-slate-800 space-y-6">
-                    <!-- Pix Box -->
-                    <div class="bg-slate-950 border border-indigo-500/30 rounded-2xl p-5">
-                        <p class="text-indigo-400 font-bold mb-3 flex items-center gap-2">
-                            <i data-lucide="qr-code" class="w-5 h-5"></i> Pagamento Pix
-                        </p>
-                        <div class="text-sm space-y-1 text-slate-300">
-                            <p><strong>Valor:</strong> R$ 10,00</p>
-                            <p><strong>Nome:</strong> Manoel Omar Barbosa Gonçalves</p>
-                            <p class="text-xs mt-3 text-slate-500 uppercase font-bold">Chave E-mail:</p>
-                            <div class="flex gap-2 mt-1">
-                                <code class="flex-1 bg-slate-900 p-3 rounded-xl text-indigo-300 font-mono text-xs break-all" id="pix-key">pix@manoelgoncalves.com.br</code>
-                                <button type="button" onclick="copyPix()" class="bg-indigo-600 p-3 rounded-xl hover:bg-indigo-500"><i data-lucide="copy" class="w-5 h-5"></i></button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Upload -->
-                    <div class="space-y-3">
-                        <label class="text-xs font-bold text-slate-500 uppercase ml-1">Anexar Comprovante</label>
-                        <p class="text-[11px] text-amber-500 font-bold leading-tight">A confirmação do ingresso somente acontece após o envio do comprovante.</p>
-                        <label for="comprovante" class="flex flex-col items-center justify-center w-full h-32 bg-slate-950 border-2 border-dashed border-slate-800 rounded-3xl cursor-pointer hover:bg-slate-900/50 transition-all">
-                            <div id="upload-ui" class="flex flex-col items-center">
-                                <i data-lucide="image" class="w-8 h-8 text-slate-600 mb-2"></i>
-                                <span class="text-sm text-slate-500">Selecionar imagem do comprovante</span>
-                            </div>
-                            <div id="file-ready" class="hidden flex items-center gap-2 text-emerald-400">
-                                <i data-lucide="check-circle" class="w-6 h-6"></i>
-                                <span class="font-bold text-sm">Comprovante anexado!</span>
-                            </div>
-                            <input id="comprovante" type="file" accept="image/*" class="hidden" required onchange="onFileSelected(this)">
-                        </label>
-                    </div>
-                </div>
-
-                <button type="submit" id="btn-submit" disabled class="w-full py-5 rounded-2xl font-black text-lg bg-indigo-600 shadow-lg shadow-indigo-600/20 opacity-50 cursor-not-allowed transition-all uppercase tracking-widest">
-                    Finalizar Compra
+                <button onclick="goToPayment()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 mb-3">
+                    Continuar para Pagamento <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
-            </form>
-        </div>
-
-        <!-- Sucesso -->
-        <div id="success-ui" class="hidden bg-slate-900 border border-emerald-500/30 rounded-3xl p-10 text-center shadow-2xl">
-            <div class="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/20">
-                <i data-lucide="check" class="w-12 h-12 text-white"></i>
             </div>
-            <h2 class="text-3xl font-bold text-white mb-3">Recebido!</h2>
-            <p class="text-slate-400 leading-relaxed mb-8">
-                Sua reserva está sendo analisada pela nossa inteligência artificial. <br>
-                <strong>Você receberá a confirmação no seu WhatsApp em poucos minutos!</strong>
-            </p>
-            <button onclick="location.reload()" class="bg-slate-800 text-slate-300 py-3 px-8 rounded-2xl font-bold">Fazer nova reserva</button>
+
+            <!-- PIX State (Hidden by default) -->
+            <div class="bg-white text-slate-800 p-6 rounded-2xl shadow-xl sticky top-24 border-2 border-indigo-500 hidden flex flex-col" id="pix-panel">
+                <div class="text-center mb-4 border-b border-slate-100 pb-4">
+                    <div class="bg-emerald-100 text-emerald-600 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i data-lucide="check" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold">Pedido Quase Pronto!</h3>
+                    <p class="text-sm text-slate-500">Efetue o pagamento para liberar a gravação.</p>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4 text-center">
+                    <p class="text-xs text-slate-500 uppercase tracking-widest font-bold mb-1">Chave PIX (E-mail)</p>
+                    <p class="text-lg font-black text-indigo-600 mb-2 select-all" id="pix-key">pix@estudiovoz.com.br</p>
+                    <p class="text-xs text-slate-500">Manoel Omar Barbosa Gonçalves</p>
+                    <p class="text-xs text-slate-500 font-bold mt-1">Valor: R$ 9,90</p>
+                    
+                    <button onclick="copyPix()" class="mt-3 w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 rounded text-sm transition flex items-center justify-center gap-2">
+                        <i data-lucide="copy" class="w-4 h-4"></i> Copiar Chave PIX
+                    </button>
+                </div>
+
+                <!-- Dados do Cliente -->
+                <div class="mb-4 text-left bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h4 class="text-sm font-bold text-slate-800 mb-3 border-b border-slate-200 pb-2">Seus Dados para Entrega</h4>
+                    
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Nome ou Empresa *</label>
+                    <input type="text" id="client-name" class="w-full p-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-indigo-500 mb-3 bg-white" placeholder="Ex: Rádio X ou João Silva">
+                    
+                    <label class="block text-xs font-bold text-slate-700 mb-1">WhatsApp *</label>
+                    <input type="tel" id="client-whatsapp" class="w-full p-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-indigo-500 mb-3 bg-white" placeholder="(00) 00000-0000">
+                    
+                    <label class="block text-xs font-bold text-slate-700 mb-1">E-mail *</label>
+                    <input type="email" id="client-email" class="w-full p-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-indigo-500 mb-1 bg-white" placeholder="seu@email.com">
+                </div>
+
+                <!-- Formulário de Comprovante -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Anexe o Comprovante (Imagem ou PDF) *</label>
+                    <input type="file" id="comprovante-input" accept="image/*,application/pdf" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-lg bg-white">
+                </div>
+
+                <div class="text-xs text-slate-500 mb-4 text-center leading-relaxed">
+                    * A gravação será entregue em até 30 minutos (durante o horário comercial).
+                </div>
+
+                <button id="btn-submit" onclick="submitToGoogle()" disabled class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 opacity-50 cursor-not-allowed">
+                    <i data-lucide="upload-cloud" class="w-5 h-5"></i> Enviar Pedido
+                </button>
+                
+                <button onclick="backToEditor()" class="w-full text-center text-sm text-slate-400 mt-4 hover:text-slate-600 underline">
+                    Voltar para o texto
+                </button>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading-panel" class="hidden bg-white p-8 rounded-2xl shadow-xl sticky top-24 border border-slate-200 text-center">
+                <div class="loader ease-linear rounded-full border-4 border-t-4 border-slate-200 h-12 w-12 mx-auto mb-4"></div>
+                <h3 class="text-lg font-bold text-slate-800">Enviando Pedido...</h3>
+                <p class="text-sm text-slate-500">Por favor, aguarde alguns segundos.</p>
+            </div>
+
+            <!-- Success State -->
+            <div id="success-panel" class="hidden bg-emerald-50 border border-emerald-200 p-8 rounded-2xl shadow-xl sticky top-24 text-center">
+                <div class="bg-emerald-500 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="check-circle" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold text-emerald-800 mb-2">Recebemos seu Pedido!</h3>
+                <p class="text-sm text-emerald-600 mb-6">O seu áudio será processado e enviado para o e-mail ou contacto em até 30 minutos.</p>
+                <button onclick="location.reload()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition">
+                    Fazer Novo Pedido
+                </button>
+            </div>
+
         </div>
     </main>
 
+    <footer class="bg-white border-t border-slate-200 mt-12 py-8 text-center text-slate-500 text-sm px-4">
+        &copy; 2026 EstúdioVoz Express. Áudios rápidos de alta qualidade.<br>
+        <span class="text-xs mt-2 block">Horário de Atendimento: Seg a Sex, das 09h às 18h.</span>
+    </footer>
+
     <script>
         lucide.createIcons();
-        let fileBase64 = "";
 
-        async function refreshStatus() {
-            try {
-                const res = await fetch(`${GOOGLE_SHEETS_URL}?action=status`);
-                const data = await res.json();
-                document.getElementById('counter').innerText = data.remaining;
-                document.getElementById('progress').style.width = (data.remaining / TOTAL_TICKETS * 100) + "%";
-            } catch(e) { document.getElementById('counter').innerText = TOTAL_TICKETS; }
-        }
+        // COLOQUE AQUI O SEU LINK DA APP DO GOOGLE SCRIPT (Deploy URL)
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQ0pUvLgW4sH8T27hK2V668PttD6b07cIfsP3Z8k1G3iL9bB3UfM501W2h6dYtSjMvlg/exec';
 
-        function onFileSelected(input) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    fileBase64 = e.target.result.split(',')[1];
-                    document.getElementById('upload-ui').classList.add('hidden');
-                    document.getElementById('file-ready').classList.remove('hidden');
-                    const btn = document.getElementById('btn-submit');
-                    btn.disabled = false;
-                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
-                };
-                reader.readAsDataURL(file);
+        let selectedVoice = "Locutora Francisca";
+        let selectedMusic = "Nenhuma";
+        const MAX_WORDS = 120;
+
+        const textInput = document.getElementById('text-input');
+        const wordCount = document.getElementById('word-count');
+        const summaryWords = document.getElementById('summary-words');
+
+        textInput.addEventListener('input', function() {
+            let text = this.value;
+            let wordsArray = text.trim().split(/\s+/).filter(word => word.length > 0);
+            
+            if (wordsArray.length > MAX_WORDS) {
+                wordsArray = wordsArray.slice(0, MAX_WORDS);
+                this.value = wordsArray.join(" ") + " ";
             }
-        }
 
-        function copyPix() {
-            const text = document.getElementById('pix-key').innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Chave Pix copiada!");
-            });
-        }
+            const currentWords = wordsArray.length;
+            wordCount.innerText = `${currentWords} / ${MAX_WORDS} palavras`;
+            summaryWords.innerText = `${currentWords} palavras`;
 
-        document.getElementById('ticket-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-submit');
-            btn.disabled = true;
-            btn.innerText = "PROCESSANDO...";
-
-            const payload = {
-                nome: document.getElementById('nome').value,
-                whatsapp: document.getElementById('whatsapp').value,
-                email: document.getElementById('email').value,
-                file: fileBase64,
-                fileName: document.getElementById('comprovante').files[0].name
-            };
-
-            try {
-                await fetch(GOOGLE_SHEETS_URL, { 
-                    method: 'POST', 
-                    body: JSON.stringify(payload),
-                    mode: 'no-cors' 
-                });
-                document.getElementById('form-container').classList.add('hidden');
-                document.getElementById('success-ui').classList.remove('hidden');
-            } catch(err) {
-                alert("Erro ao enviar. Tente novamente.");
-                btn.disabled = false;
-                btn.innerText = "Finalizar Compra";
+            if(currentWords >= MAX_WORDS) {
+                wordCount.classList.add('bg-red-100', 'text-red-600');
+                wordCount.classList.remove('bg-slate-100', 'text-slate-500');
+            } else {
+                wordCount.classList.remove('bg-red-100', 'text-red-600');
+                wordCount.classList.add('bg-slate-100', 'text-slate-500');
             }
         });
 
-        refreshStatus();
+        function selectVoice(element, type) {
+            document.querySelectorAll('.voice-card').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedVoice = element.querySelector('h3').innerText;
+            document.getElementById('summary-voice').innerText = selectedVoice;
+        }
+
+        function playDemo(audioId) {
+            const audio = document.getElementById(audioId);
+            if (!audio.src || audio.src === window.location.href) {
+                alert("O áudio demonstrativo será inserido em breve.");
+                return;
+            }
+            if (audio.paused) {
+                document.querySelectorAll('audio').forEach(a => a.pause());
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        }
+
+        function selectMusic(element, name) {
+            document.querySelectorAll('.music-card').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedMusic = name;
+            document.getElementById('summary-music').innerText = selectedMusic;
+        }
+
+        function goToPayment() {
+            if (textInput.value.trim().split(/\s+/).filter(w => w.length > 0).length === 0) {
+                alert("Por favor, digite o texto da gravação antes de continuar.");
+                textInput.focus();
+                return;
+            }
+            document.getElementById('checkout-panel').classList.add('hidden');
+            document.getElementById('pix-panel').classList.remove('hidden');
+        }
+
+        function backToEditor() {
+            document.getElementById('pix-panel').classList.add('hidden');
+            document.getElementById('checkout-panel').classList.remove('hidden');
+        }
+
+        function copyPix() {
+            navigator.clipboard.writeText("pix@estudiovoz.com.br").then(() => {
+                alert("Chave PIX copiada com sucesso!");
+            });
+        }
+
+        // Ativar botão apenas quando anexar comprovante
+        const fileInputElem = document.getElementById('comprovante-input');
+        const btnSubmitElem = document.getElementById('btn-submit');
+
+        fileInputElem.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                btnSubmitElem.disabled = false;
+                btnSubmitElem.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                btnSubmitElem.disabled = true;
+                btnSubmitElem.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        });
+
+        // Função para converter e enviar dados para o Google Sheets
+        async function submitToGoogle() {
+            const fileInput = document.getElementById('comprovante-input');
+            const file = fileInput.files[0];
+            const text = textInput.value.trim();
+            const clientName = document.getElementById('client-name').value.trim();
+            const clientWhatsapp = document.getElementById('client-whatsapp').value.trim();
+            const clientEmail = document.getElementById('client-email').value.trim();
+
+            if (!clientName || !clientWhatsapp || !clientEmail) {
+                alert("Por favor, preencha todos os seus dados de contacto (Nome, WhatsApp e E-mail) para podermos entregar o áudio.");
+                return;
+            }
+
+            if (!file) {
+                alert("Por favor, anexe o comprovante de pagamento.");
+                return;
+            }
+
+            if (GOOGLE_SCRIPT_URL === 'SUA_URL_DO_GOOGLE_AQUI') {
+                alert("O sistema não está configurado com o link do Google Sheets ainda.");
+                return;
+            }
+
+            // Mostra tela de carregamento
+            document.getElementById('pix-panel').classList.add('hidden');
+            document.getElementById('loading-panel').classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = async function() {
+                const base64String = reader.result.split(',')[1];
+                
+                const payload = {
+                    text: text,
+                    voice: selectedVoice,
+                    music: selectedMusic,
+                    clientName: clientName,
+                    clientWhatsapp: clientWhatsapp,
+                    clientEmail: clientEmail,
+                    fileName: file.name,
+                    mimeType: file.type,
+                    fileBase64: base64String
+                };
+
+                try {
+                    const response = await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors', // Evita bloqueios do Google, mas não devolve JSON legível
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    // Sucesso
+                    document.getElementById('loading-panel').classList.add('hidden');
+                    document.getElementById('success-panel').classList.remove('hidden');
+                    
+                } catch (error) {
+                    alert("Erro ao enviar pedido. Tente novamente.");
+                    document.getElementById('loading-panel').classList.add('hidden');
+                    document.getElementById('pix-panel').classList.remove('hidden');
+                }
+            };
+            
+            reader.readAsDataURL(file);
+        }
     </script>
 </body>
 </html>
