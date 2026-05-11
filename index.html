@@ -1,441 +1,144 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EstúdioVoz | Gravações Express</title>
+    <title>Estúdio Voz - Automação IA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .voice-card.selected { border-color: #4f46e5; background-color: #e0e7ff; }
-        .music-card.selected { border-color: #4f46e5; background-color: #e0e7ff; }
-        textarea::-webkit-scrollbar { width: 8px; }
-        textarea::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
-        .loader { border-top-color: #4f46e5; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
-        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
     </style>
 </head>
-<body class="text-slate-800">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <!-- Header -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-2 text-indigo-600 font-black text-xl tracking-tight">
-                <i data-lucide="mic" class="fill-current"></i> EstúdioVoz Express
-            </div>
-            <div class="text-sm font-semibold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full hidden sm:flex items-center gap-2">
-                <i data-lucide="clock" class="w-4 h-4"></i> Entrega em até 30 minutos*
-            </div>
+    <div class="glass-panel w-full max-w-2xl rounded-2xl shadow-xl p-8">
+        <!-- Cabeçalho -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">🎙️ Estúdio de Gravação IA</h1>
+            <p class="text-gray-500">Locução profissional entregue em minutos. Até 120 palavras por apenas <span class="font-bold text-green-600">R$ 10,00</span>.</p>
         </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="max-w-6xl mx-auto px-4 py-8 grid lg:grid-cols-3 gap-8">
-        
-        <!-- Left Column: Editor -->
-        <div class="lg:col-span-2 space-y-6">
-            
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold mb-1 flex items-center gap-2">
-                    <span class="bg-indigo-100 text-indigo-600 w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span> 
-                    Digite seu Texto
-                </h2>
-                <p class="text-sm text-slate-500 mb-4">Cole o texto do seu anúncio. Máximo de 120 palavras.</p>
-                
-                <textarea id="text-input" class="w-full h-40 p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none transition text-slate-700" placeholder="Cole aqui o seu roteiro... Ex: Aproveite as ofertas deste fim de semana na nossa loja!"></textarea>
-                
-                <div class="flex justify-between items-center mt-2 text-xs font-medium">
-                    <span id="word-count" class="text-slate-500 font-bold px-2 py-1 bg-slate-100 rounded">0 / 120 palavras</span>
-                    <span class="text-slate-400">Ponto e vírgula contam na pausa.</span>
+        <form id="orderForm" class="space-y-6">
+            <!-- Texto da Locução -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">O seu Texto para Gravação</label>
+                <textarea id="clientText" rows="6" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none" placeholder="Escreva aqui o texto que a IA vai narrar..."></textarea>
+                <div class="flex justify-between items-center mt-2">
+                    <span id="wordCountMsg" class="text-sm text-gray-500">Palavras: <span id="wordCount">0</span> / 120</span>
+                    <span id="warningMsg" class="text-sm text-red-500 hidden font-semibold">Limite de 120 palavras atingido!</span>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold mb-1 flex items-center gap-2">
-                    <span class="bg-indigo-100 text-indigo-600 w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span> 
-                    Escolha a Voz
-                </h2>
-                <p class="text-sm text-slate-500 mb-4">Vozes digitais humanizadas de alta qualidade.</p>
-                
+            <!-- Seleção de Vozes -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-3">Escolha a Voz</label>
                 <div class="grid grid-cols-2 gap-4">
-                    <!-- Locutora Francisca -->
-                    <div class="voice-card selected border-2 border-slate-200 rounded-xl p-4 cursor-pointer hover:border-indigo-300 transition" onclick="selectVoice(this, 'Feminina')">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div class="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-pink-600">
-                                <i data-lucide="user"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold">Locutora Francisca</h3>
-                                <p class="text-xs text-slate-500">Padrão Varejo</p>
-                            </div>
-                        </div>
-                        <button class="w-full mt-2 py-1.5 bg-white border border-slate-200 rounded text-xs font-semibold hover:bg-slate-50 flex items-center justify-center gap-1" onclick="event.stopPropagation(); playDemo('demo-fem')">
-                            <i data-lucide="play" class="w-3 h-3"></i> Ouvir Exemplo
-                        </button>
-                        <audio id="demo-fem" src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2023/06/AUDIO-02-E-MEIO-DE-5-LEONARDO2.mp3"></audio>
-                    </div>
-
-                    <!-- Locutor Carlos -->
-                    <div class="voice-card border-2 border-slate-200 rounded-xl p-4 cursor-pointer hover:border-indigo-300 transition" onclick="selectVoice(this, 'Masculina')">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
-                                <i data-lucide="user"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold">Locutor Carlos</h3>
-                                <p class="text-xs text-slate-500">Padrão Impacto</p>
-                            </div>
-                        </div>
-                        <button class="w-full mt-2 py-1.5 bg-white border border-slate-200 rounded text-xs font-semibold hover:bg-slate-50 flex items-center justify-center gap-1" onclick="event.stopPropagation(); playDemo('demo-masc')">
-                            <i data-lucide="play" class="w-3 h-3"></i> Ouvir Exemplo
-                        </button>
-                        <audio id="demo-masc" src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/untitled_Locutor-Manoel-Goncalves_2026-05-03-23_29_15.mp3"></audio>
-                    </div>
+                    <label class="relative flex flex-col p-4 cursor-pointer rounded-lg border bg-white border-gray-200 hover:border-blue-500 transition-all has-[:checked]:border-blue-500 has-[:checked]:ring-2 has-[:checked]:ring-blue-500">
+                        <input type="radio" name="voice" value="francisca" class="peer sr-only" checked>
+                        <span class="font-bold text-gray-800">👩 Francisca</span>
+                        <span class="text-xs text-gray-500 mt-1">Voz feminina, alegre e comercial.</span>
+                    </label>
+                    <label class="relative flex flex-col p-4 cursor-pointer rounded-lg border bg-white border-gray-200 hover:border-blue-500 transition-all has-[:checked]:border-blue-500 has-[:checked]:ring-2 has-[:checked]:ring-blue-500">
+                        <input type="radio" name="voice" value="carlos" class="peer sr-only">
+                        <span class="font-bold text-gray-800">👨 Carlos</span>
+                        <span class="text-xs text-gray-500 mt-1">Voz masculina, grave e institucional.</span>
+                    </label>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold mb-1 flex items-center gap-2">
-                    <span class="bg-indigo-100 text-indigo-600 w-6 h-6 rounded-full flex items-center justify-center text-sm">3</span> 
-                    Trilha Sonora (Opcional)
-                </h2>
-                <p class="text-sm text-slate-500 mb-4">Música de fundo mixada junto com a voz.</p>
-                
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <!-- Sem Trilha -->
-                    <div class="music-card selected border-2 border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-indigo-300 transition flex flex-col justify-center" onclick="selectMusic(this, 'Nenhuma')">
-                        <i data-lucide="mic-off" class="mx-auto mb-2 text-slate-400 w-5 h-5"></i>
-                        <span class="text-sm font-semibold text-slate-600">Sem Trilha</span>
-                    </div>
-
-                    <!-- Trilha 01 -->
-                    <div class="music-card border-2 border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-indigo-300 transition flex flex-col" onclick="selectMusic(this, 'Trilha 01')">
-                        <i data-lucide="music" class="mx-auto mb-2 text-indigo-500 w-5 h-5"></i>
-                        <span class="text-sm font-semibold mb-2">Trilha 01</span>
-                        <button class="mt-auto w-full py-1.5 bg-white border border-slate-200 rounded text-xs font-semibold hover:bg-slate-50 flex items-center justify-center gap-1" onclick="event.stopPropagation(); playDemo('demo-trilha-1')">
-                            <i data-lucide="play" class="w-3 h-3"></i> Ouvir
-                        </button>
-                        <audio id="demo-trilha-1" src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/TRILHA-PARA-COMERCIAL-Canal-Dany-Alves-Locutora-13.mp3"></audio>
-                    </div>
-
-                    <!-- Trilha 02 -->
-                    <div class="music-card border-2 border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-indigo-300 transition flex flex-col" onclick="selectMusic(this, 'Trilha 02')">
-                        <i data-lucide="music" class="mx-auto mb-2 text-blue-500 w-5 h-5"></i>
-                        <span class="text-sm font-semibold mb-2">Trilha 02</span>
-                        <button class="mt-auto w-full py-1.5 bg-white border border-slate-200 rounded text-xs font-semibold hover:bg-slate-50 flex items-center justify-center gap-1" onclick="event.stopPropagation(); playDemo('demo-trilha-2')">
-                            <i data-lucide="play" class="w-3 h-3"></i> Ouvir
-                        </button>
-                        <audio id="demo-trilha-2" src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/TRILHA-PARA-COMERCIAL-Canal-Dany-Alves-Locutora-12.mp3"></audio>
-                    </div>
-
-                    <!-- Trilha 03 -->
-                    <div class="music-card border-2 border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-indigo-300 transition flex flex-col" onclick="selectMusic(this, 'Trilha 03')">
-                        <i data-lucide="music" class="mx-auto mb-2 text-emerald-500 w-5 h-5"></i>
-                        <span class="text-sm font-semibold mb-2">Trilha 03</span>
-                        <button class="mt-auto w-full py-1.5 bg-white border border-slate-200 rounded text-xs font-semibold hover:bg-slate-50 flex items-center justify-center gap-1" onclick="event.stopPropagation(); playDemo('demo-trilha-3')">
-                            <i data-lucide="play" class="w-3 h-3"></i> Ouvir
-                        </button>
-                        <audio id="demo-trilha-3" src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/Bed_Airy_Bass_Beat.mp3"></audio>
-                    </div>
-
-                    <!-- Trilha 04 -->
-                    <div class="music-card border-2 border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-indigo-300 transition flex flex-col" onclick="selectMusic(this, 'Trilha 04')">
-                        <i data-lucide="music" class="mx-auto mb-2 text-purple-500 w-5 h-5"></i>
-                        <span class="text-sm font-semibold mb-2">Trilha 04</span>
-                        <button class="mt-auto w-full py-1.5 bg-white border border-slate-200 rounded text-xs font-semibold hover:bg-slate-50 flex items-center justify-center gap-1" onclick="event.stopPropagation(); playDemo('demo-trilha-4')">
-                            <i data-lucide="play" class="w-3 h-3"></i> Ouvir
-                        </button>
-                        <audio id="demo-trilha-4" src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/TRILHA-PARA-COMERCIAL-Canal-Dany-Alves-Locutora-7.mp3"></audio>
-                    </div>
-
-                    <!-- Trilha 05 -->
-                    <div class="music-card border-2 border-slate-200 rounded-xl p-3 text-center cursor-pointer hover:border-indigo-300 transition flex flex-col" onclick="selectMusic(this, 'Trilha 05')">
-                        <i data-lucide="music" class="mx-auto mb-2 text-pink-500 w-5 h-5"></i>
-                        <span class="text-sm font-semibold mb-2">Trilha 05</span>
-                        <button class="mt-auto w-full py-1.5 bg-white border border-slate-200 rounded text-xs font-semibold hover:bg-slate-50 flex items-center justify-center gap-1" onclick="event.stopPropagation(); playDemo('demo-trilha-5')">
-                            <i data-lucide="play" class="w-3 h-3"></i> Ouvir
-                        </button>
-                        <audio id="demo-trilha-5" src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/TRILHA-PARA-COMERCIAL-Canal-Dany-Alves-Locutora-2.mp3"></audio>
-                    </div>
-                </div>
+            <!-- Seleção de Trilha -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Trilha de Fundo</label>
+                <select id="backgroundTrack" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                    <option value="none">Sem Trilha (Apenas a voz)</option>
+                    <option value="trilha_varejo">Trilha Varejo (Animada)</option>
+                    <option value="trilha_emocional">Trilha Emocional (Suave)</option>
+                </select>
             </div>
 
+            <!-- Dados de Contato -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">O seu WhatsApp (para receber o áudio)</label>
+                <input type="tel" id="clientPhone" placeholder="(00) 00000-0000" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+            </div>
+
+            <!-- Botão de Ação -->
+            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed text-lg flex justify-center items-center">
+                <span>Gerar Pedido e Pagar via PIX (R$ 10,00)</span>
+            </button>
+        </form>
+
+        <!-- Área do PIX (Escondida inicialmente) -->
+        <div id="pixArea" class="hidden mt-8 p-6 bg-green-50 border border-green-200 rounded-xl text-center">
+            <h3 class="text-xl font-bold text-green-800 mb-2">Pedido Recebido!</h3>
+            <p class="text-sm text-green-700 mb-4">A aguardar sistema de pagamento PagSeguro...</p>
         </div>
-
-        <!-- Right Column: Summary & Checkout -->
-        <div class="lg:col-span-1">
-            <!-- Resumo -->
-            <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl sticky top-24" id="checkout-panel">
-                <h3 class="text-xl font-bold mb-4 border-b border-slate-700 pb-4">Resumo do Pedido</h3>
-                
-                <ul class="space-y-3 mb-6 text-sm text-slate-300">
-                    <li class="flex justify-between"><span>Voz:</span> <strong class="text-white" id="summary-voice">Locutora Francisca</strong></li>
-                    <li class="flex justify-between"><span>Trilha Sonora:</span> <strong class="text-white" id="summary-music">Nenhuma</strong></li>
-                    <li class="flex justify-between"><span>Tamanho:</span> <strong class="text-emerald-400 font-bold" id="summary-words">0 palavras</strong></li>
-                </ul>
-
-                <div class="flex justify-between items-end mb-6">
-                    <span class="text-slate-400 text-sm">Valor Único</span>
-                    <div class="text-right">
-                        <span class="text-sm text-slate-400 line-through">R$ 29,90</span>
-                        <div class="text-3xl font-black text-emerald-400">R$ 9,90</div>
-                    </div>
-                </div>
-
-                <button onclick="goToPayment()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 mb-3">
-                    Continuar para Pagamento <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </button>
-            </div>
-
-            <!-- PIX State (Hidden by default) -->
-            <div class="bg-white text-slate-800 p-6 rounded-2xl shadow-xl sticky top-24 border-2 border-indigo-500 hidden flex flex-col" id="pix-panel">
-                <div class="text-center mb-4 border-b border-slate-100 pb-4">
-                    <div class="bg-emerald-100 text-emerald-600 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <i data-lucide="check" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-xl font-bold">Pedido Quase Pronto!</h3>
-                    <p class="text-sm text-slate-500">Efetue o pagamento para liberar a gravação.</p>
-                </div>
-
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4 text-center">
-                    <p class="text-xs text-slate-500 uppercase tracking-widest font-bold mb-1">Chave PIX (E-mail)</p>
-                    <p class="text-lg font-black text-indigo-600 mb-2 select-all" id="pix-key">pix@estudiovoz.com.br</p>
-                    <p class="text-xs text-slate-500">Manoel Omar Barbosa Gonçalves</p>
-                    <p class="text-xs text-slate-500 font-bold mt-1">Valor: R$ 9,90</p>
-                    
-                    <button onclick="copyPix()" class="mt-3 w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 rounded text-sm transition flex items-center justify-center gap-2">
-                        <i data-lucide="copy" class="w-4 h-4"></i> Copiar Chave PIX
-                    </button>
-                </div>
-
-                <!-- Dados do Cliente -->
-                <div class="mb-4 text-left bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <h4 class="text-sm font-bold text-slate-800 mb-3 border-b border-slate-200 pb-2">Seus Dados para Entrega</h4>
-                    
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Nome ou Empresa *</label>
-                    <input type="text" id="client-name" class="w-full p-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-indigo-500 mb-3 bg-white" placeholder="Ex: Rádio X ou João Silva">
-                    
-                    <label class="block text-xs font-bold text-slate-700 mb-1">WhatsApp *</label>
-                    <input type="tel" id="client-whatsapp" class="w-full p-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-indigo-500 mb-3 bg-white" placeholder="(00) 00000-0000">
-                    
-                    <label class="block text-xs font-bold text-slate-700 mb-1">E-mail *</label>
-                    <input type="email" id="client-email" class="w-full p-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-indigo-500 mb-1 bg-white" placeholder="seu@email.com">
-                </div>
-
-                <!-- Formulário de Comprovante -->
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Anexe o Comprovante (Imagem ou PDF) *</label>
-                    <input type="file" id="comprovante-input" accept="image/*,application/pdf" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-200 rounded-lg bg-white">
-                </div>
-
-                <div class="text-xs text-slate-500 mb-4 text-center leading-relaxed">
-                    * A gravação será entregue em até 30 minutos (durante o horário comercial).
-                </div>
-
-                <button id="btn-submit" onclick="submitToGoogle()" disabled class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 opacity-50 cursor-not-allowed">
-                    <i data-lucide="upload-cloud" class="w-5 h-5"></i> Enviar Pedido
-                </button>
-                
-                <button onclick="backToEditor()" class="w-full text-center text-sm text-slate-400 mt-4 hover:text-slate-600 underline">
-                    Voltar para o texto
-                </button>
-            </div>
-
-            <!-- Loading State -->
-            <div id="loading-panel" class="hidden bg-white p-8 rounded-2xl shadow-xl sticky top-24 border border-slate-200 text-center">
-                <div class="loader ease-linear rounded-full border-4 border-t-4 border-slate-200 h-12 w-12 mx-auto mb-4"></div>
-                <h3 class="text-lg font-bold text-slate-800">Enviando Pedido...</h3>
-                <p class="text-sm text-slate-500">Por favor, aguarde alguns segundos.</p>
-            </div>
-
-            <!-- Success State -->
-            <div id="success-panel" class="hidden bg-emerald-50 border border-emerald-200 p-8 rounded-2xl shadow-xl sticky top-24 text-center">
-                <div class="bg-emerald-500 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i data-lucide="check-circle" class="w-8 h-8"></i>
-                </div>
-                <h3 class="text-xl font-bold text-emerald-800 mb-2">Recebemos seu Pedido!</h3>
-                <p class="text-sm text-emerald-600 mb-6">O seu áudio será processado e enviado para o e-mail ou contacto em até 30 minutos.</p>
-                <button onclick="location.reload()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition">
-                    Fazer Novo Pedido
-                </button>
-            </div>
-
-        </div>
-    </main>
-
-    <footer class="bg-white border-t border-slate-200 mt-12 py-8 text-center text-slate-500 text-sm px-4">
-        &copy; 2026 EstúdioVoz Express. Áudios rápidos de alta qualidade.<br>
-        <span class="text-xs mt-2 block">Horário de Atendimento: Seg a Sex, das 09h às 18h.</span>
-    </footer>
+    </div>
 
     <script>
-        lucide.createIcons();
+        const textarea = document.getElementById('clientText');
+        const wordCountDisplay = document.getElementById('wordCount');
+        const warningMsg = document.getElementById('warningMsg');
+        const submitBtn = document.getElementById('submitBtn');
+        const maxWords = 120;
 
-        // COLOQUE AQUI O SEU LINK DA APP DO GOOGLE SCRIPT (Deploy URL)
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQ0pUvLgW4sH8T27hK2V668PttD6b07cIfsP3Z8k1G3iL9bB3UfM501W2h6dYtSjMvlg/exec';
-
-        let selectedVoice = "Locutora Francisca";
-        let selectedMusic = "Nenhuma";
-        const MAX_WORDS = 120;
-
-        const textInput = document.getElementById('text-input');
-        const wordCount = document.getElementById('word-count');
-        const summaryWords = document.getElementById('summary-words');
-
-        textInput.addEventListener('input', function() {
-            let text = this.value;
-            let wordsArray = text.trim().split(/\s+/).filter(word => word.length > 0);
+        textarea.addEventListener('input', function() {
+            let words = this.value.trim().split(/\s+/).filter(word => word.length > 0);
+            let currentCount = words.length;
             
-            if (wordsArray.length > MAX_WORDS) {
-                wordsArray = wordsArray.slice(0, MAX_WORDS);
-                this.value = wordsArray.join(" ") + " ";
-            }
-
-            const currentWords = wordsArray.length;
-            wordCount.innerText = `${currentWords} / ${MAX_WORDS} palavras`;
-            summaryWords.innerText = `${currentWords} palavras`;
-
-            if(currentWords >= MAX_WORDS) {
-                wordCount.classList.add('bg-red-100', 'text-red-600');
-                wordCount.classList.remove('bg-slate-100', 'text-slate-500');
+            if (currentCount > maxWords) {
+                const truncatedText = words.slice(0, maxWords).join(" ");
+                this.value = truncatedText;
+                currentCount = maxWords;
+                warningMsg.classList.remove('hidden');
+                textarea.classList.add('border-red-500', 'ring-red-500');
             } else {
-                wordCount.classList.remove('bg-red-100', 'text-red-600');
-                wordCount.classList.add('bg-slate-100', 'text-slate-500');
+                warningMsg.classList.add('hidden');
+                textarea.classList.remove('border-red-500', 'ring-red-500');
             }
+            
+            wordCountDisplay.textContent = currentCount;
+            submitBtn.disabled = currentCount === 0;
         });
 
-        function selectVoice(element, type) {
-            document.querySelectorAll('.voice-card').forEach(el => el.classList.remove('selected'));
-            element.classList.add('selected');
-            selectedVoice = element.querySelector('h3').innerText;
-            document.getElementById('summary-voice').innerText = selectedVoice;
-        }
+        submitBtn.disabled = true;
 
-        function playDemo(audioId) {
-            const audio = document.getElementById(audioId);
-            if (!audio.src || audio.src === window.location.href) {
-                alert("O áudio demonstrativo será inserido em breve.");
-                return;
-            }
-            if (audio.paused) {
-                document.querySelectorAll('audio').forEach(a => a.pause());
-                audio.play();
-            } else {
-                audio.pause();
-            }
-        }
-
-        function selectMusic(element, name) {
-            document.querySelectorAll('.music-card').forEach(el => el.classList.remove('selected'));
-            element.classList.add('selected');
-            selectedMusic = name;
-            document.getElementById('summary-music').innerText = selectedMusic;
-        }
-
-        function goToPayment() {
-            if (textInput.value.trim().split(/\s+/).filter(w => w.length > 0).length === 0) {
-                alert("Por favor, digite o texto da gravação antes de continuar.");
-                textInput.focus();
-                return;
-            }
-            document.getElementById('checkout-panel').classList.add('hidden');
-            document.getElementById('pix-panel').classList.remove('hidden');
-        }
-
-        function backToEditor() {
-            document.getElementById('pix-panel').classList.add('hidden');
-            document.getElementById('checkout-panel').classList.remove('hidden');
-        }
-
-        function copyPix() {
-            navigator.clipboard.writeText("pix@estudiovoz.com.br").then(() => {
-                alert("Chave PIX copiada com sucesso!");
-            });
-        }
-
-        // Ativar botão apenas quando anexar comprovante
-        const fileInputElem = document.getElementById('comprovante-input');
-        const btnSubmitElem = document.getElementById('btn-submit');
-
-        fileInputElem.addEventListener('change', function() {
-            if (this.files && this.files.length > 0) {
-                btnSubmitElem.disabled = false;
-                btnSubmitElem.classList.remove('opacity-50', 'cursor-not-allowed');
-            } else {
-                btnSubmitElem.disabled = true;
-                btnSubmitElem.classList.add('opacity-50', 'cursor-not-allowed');
-            }
-        });
-
-        // Função para converter e enviar dados para o Google Sheets
-        async function submitToGoogle() {
-            const fileInput = document.getElementById('comprovante-input');
-            const file = fileInput.files[0];
-            const text = textInput.value.trim();
-            const clientName = document.getElementById('client-name').value.trim();
-            const clientWhatsapp = document.getElementById('client-whatsapp').value.trim();
-            const clientEmail = document.getElementById('client-email').value.trim();
-
-            if (!clientName || !clientWhatsapp || !clientEmail) {
-                alert("Por favor, preencha todos os seus dados de contacto (Nome, WhatsApp e E-mail) para podermos entregar o áudio.");
-                return;
-            }
-
-            if (!file) {
-                alert("Por favor, anexe o comprovante de pagamento.");
-                return;
-            }
-
-            if (GOOGLE_SCRIPT_URL === 'SUA_URL_DO_GOOGLE_AQUI') {
-                alert("O sistema não está configurado com o link do Google Sheets ainda.");
-                return;
-            }
-
-            // Mostra tela de carregamento
-            document.getElementById('pix-panel').classList.add('hidden');
-            document.getElementById('loading-panel').classList.remove('hidden');
-
-            const reader = new FileReader();
-            reader.onload = async function() {
-                const base64String = reader.result.split(',')[1];
-                
-                const payload = {
-                    text: text,
-                    voice: selectedVoice,
-                    music: selectedMusic,
-                    clientName: clientName,
-                    clientWhatsapp: clientWhatsapp,
-                    clientEmail: clientEmail,
-                    fileName: file.name,
-                    mimeType: file.type,
-                    fileBase64: base64String
-                };
-
-                try {
-                    const response = await fetch(GOOGLE_SCRIPT_URL, {
-                        method: 'POST',
-                        mode: 'no-cors', // Evita bloqueios do Google, mas não devolve JSON legível
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(payload)
-                    });
-
-                    // Sucesso
-                    document.getElementById('loading-panel').classList.add('hidden');
-                    document.getElementById('success-panel').classList.remove('hidden');
-                    
-                } catch (error) {
-                    alert("Erro ao enviar pedido. Tente novamente.");
-                    document.getElementById('loading-panel').classList.add('hidden');
-                    document.getElementById('pix-panel').classList.remove('hidden');
-                }
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const payload = {
+                texto: textarea.value,
+                voz: document.querySelector('input[name="voice"]:checked').value,
+                trilha: document.getElementById('backgroundTrack').value,
+                whatsapp: document.getElementById('clientPhone').value
             };
-            
-            reader.readAsDataURL(file);
-        }
+
+            submitBtn.innerHTML = `A processar...`;
+            submitBtn.disabled = true;
+
+            // Link do Webhook de Teste atualizado!
+            const webhookUrl = 'https://estudio-n8n.baatq5.easypanel.host/webhook-test/novo-pedido'; 
+
+            // Envia os dados para o n8n
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(response => response.json())
+              .then(data => {
+                  document.getElementById('orderForm').classList.add('hidden');
+                  document.getElementById('pixArea').classList.remove('hidden');
+              }).catch(error => {
+                  alert("Erro ao enviar pedido. Verifique se clicou em 'Listen for Test Event' no n8n.");
+                  submitBtn.innerHTML = `Tentar Novamente`;
+                  submitBtn.disabled = false;
+              });
+        });
     </script>
 </body>
 </html>
