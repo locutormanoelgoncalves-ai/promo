@@ -33,20 +33,29 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
-                <label class="relative flex items-center justify-center p-4 border-2 rounded-2xl cursor-pointer hover:bg-gray-50 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50">
-                    <input type="radio" name="voice" value="francisca" class="sr-only" checked>
-                    <span class="font-bold text-gray-800 text-sm">👩 Francisca</span>
-                </label>
-                <label class="relative flex items-center justify-center p-4 border-2 rounded-2xl cursor-pointer hover:bg-gray-50 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50">
-                    <input type="radio" name="voice" value="carlos" class="sr-only">
-                    <span class="font-bold text-gray-800 text-sm">👨 Carlos</span>
-                </label>
+            <!-- Indicador Visual de Voz Única -->
+            <div class="flex items-center justify-center p-4 bg-blue-50 border border-blue-100 rounded-2xl">
+                <span class="font-bold text-blue-900 text-sm">👨 Voz Padrão: Locutor Carlos</span>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" id="nome" placeholder="Seu Nome ou Empresa" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 text-sm outline-none" required>
-                <input type="tel" id="whatsapp" placeholder="WhatsApp (DDD)" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 text-sm outline-none" required>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 ml-2 text-left">Trilha de Fundo</label>
+                    <select id="trilha" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 text-sm font-medium outline-none">
+                        <option value="none">Voz Pura (Sem trilha)</option>
+                        <option value="trilha_varejo">Varejo (Animada)</option>
+                        <option value="trilha_emocional">Suave (Institucional)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 ml-2 text-left">Seu WhatsApp</label>
+                    <input type="tel" id="whatsapp" placeholder="(DDD) 99999-9999" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 text-sm font-medium outline-none" required>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 ml-2 text-left">Nome ou Empresa</label>
+                <input type="text" id="nome" placeholder="Como devemos te chamar?" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 text-sm font-medium outline-none" required>
             </div>
 
             <button type="submit" id="btnSubmit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl transition-all active:scale-95 disabled:opacity-50 uppercase text-xs tracking-widest">
@@ -54,6 +63,7 @@
             </button>
         </form>
 
+        <!-- Área de Checkout -->
         <div id="checkoutArea" class="hidden mt-8 animate-fade-in">
             <div class="pix-container p-8 rounded-[2rem] text-center shadow-inner">
                 <h3 class="text-blue-900 font-black text-lg mb-6 uppercase tracking-wider italic">Pagamento Gerado!</h3>
@@ -101,16 +111,16 @@
 
         orderForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            btnSubmit.innerText = "GERANDO PIX NO BANCO...";
+            btnSubmit.innerText = "GERANDO PIX...";
             btnSubmit.disabled = true;
             statusBox.classList.add('hidden');
 
             const payload = {
                 texto: textoArea.value,
-                voz: document.querySelector('input[name="voice"]:checked').value,
-                nome: document.getElementById('nome').value,
+                voz: 'carlos', // Definido fixamente no código
+                trilha: document.getElementById('trilha').value,
                 whatsapp: document.getElementById('whatsapp').value,
-                trilha: 'none'
+                nome: document.getElementById('nome').value
             };
 
             try {
@@ -130,12 +140,12 @@
                     document.getElementById('pixText').innerText = result.payload;
                     window.currentPixCode = result.payload;
                 } else {
-                    throw new Error("O servidor não devolveu a imagem do QR Code.");
+                    throw new Error("O servidor não devolveu o QR Code.");
                 }
 
             } catch (err) {
                 console.error(err);
-                setStatus("Erro de conexão. Verifique se o n8n está no modo 'Listen for Test Event'.");
+                setStatus("Erro de conexão. Tente novamente.");
                 btnSubmit.innerText = "TENTAR NOVAMENTE";
                 btnSubmit.disabled = false;
             }
@@ -144,7 +154,7 @@
         function copyPixCode() {
             if (window.currentPixCode) {
                 navigator.clipboard.writeText(window.currentPixCode);
-                setStatus("Código PIX copiado com sucesso!", false);
+                setStatus("Código PIX copiado!", false);
             }
         }
     </script>
