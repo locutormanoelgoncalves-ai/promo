@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estúdio Voz - Checkout IA</title>
+    <title>Estúdio Voz - Gravação IA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
@@ -22,14 +22,12 @@
             <p class="text-gray-500 mt-2 font-medium">Sua locução profissional por <span class="text-green-600 font-bold italic">R$ 10,00</span></p>
         </div>
 
-        <!-- Mensagens de Feedback -->
         <div id="statusMessage" class="hidden mb-6 p-4 rounded-2xl text-sm font-semibold text-center"></div>
 
-        <!-- Formulário de Pedido -->
         <form id="orderForm" class="space-y-5">
             <div>
                 <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest text-left ml-2">Texto da Locução</label>
-                <textarea id="texto" rows="4" class="w-full p-5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all resize-none text-sm" placeholder="Digite seu roteiro..."></textarea>
+                <textarea id="texto" rows="4" class="w-full p-5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all resize-none text-sm" placeholder="Digite seu roteiro promocional..."></textarea>
                 <div class="flex justify-between mt-2 px-2">
                     <span class="text-[10px] text-gray-400 font-bold uppercase"><span id="wordCount">0</span> / 120 palavras</span>
                 </div>
@@ -47,8 +45,8 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="text" id="nome" placeholder="Seu Nome ou Empresa" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 text-sm outline-none" required>
                 <input type="tel" id="whatsapp" placeholder="WhatsApp (DDD)" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 text-sm outline-none" required>
-                <input type="text" id="cpf_cnpj" placeholder="CPF ou CNPJ Válido" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 text-sm outline-none" required>
             </div>
 
             <button type="submit" id="btnSubmit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl transition-all active:scale-95 disabled:opacity-50 uppercase text-xs tracking-widest">
@@ -56,7 +54,6 @@
             </button>
         </form>
 
-        <!-- Área de Checkout -->
         <div id="checkoutArea" class="hidden mt-8 animate-fade-in">
             <div class="pix-container p-8 rounded-[2rem] text-center shadow-inner">
                 <h3 class="text-blue-900 font-black text-lg mb-6 uppercase tracking-wider italic">Pagamento Gerado!</h3>
@@ -104,16 +101,16 @@
 
         orderForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            btnSubmit.innerText = "VALIDANDO NO BANCO...";
+            btnSubmit.innerText = "GERANDO PIX NO BANCO...";
             btnSubmit.disabled = true;
             statusBox.classList.add('hidden');
 
             const payload = {
                 texto: textoArea.value,
                 voz: document.querySelector('input[name="voice"]:checked').value,
-                trilha: 'none',
+                nome: document.getElementById('nome').value,
                 whatsapp: document.getElementById('whatsapp').value,
-                cpf_cnpj: document.getElementById('cpf_cnpj').value.replace(/\D/g, '') // Remove pontos e traços
+                trilha: 'none'
             };
 
             try {
@@ -124,16 +121,6 @@
                 });
 
                 const data = await response.json();
-
-                // Se o n8n retornar um erro estruturado (como o que vimos na imagem)
-                if (data.errors || (data.body && data.body.errors)) {
-                    const error = data.errors ? data.errors[0] : data.body.errors[0];
-                    if (error.code === 'invalid_cpfCnpj') {
-                        throw new Error("O CPF ou CNPJ digitado é inválido. Por favor, confira os números.");
-                    }
-                    throw new Error(error.description || "Erro no processamento do banco.");
-                }
-
                 const result = Array.isArray(data) ? data[0] : data;
 
                 if (result && result.encodedImage) {
@@ -143,12 +130,12 @@
                     document.getElementById('pixText').innerText = result.payload;
                     window.currentPixCode = result.payload;
                 } else {
-                    throw new Error("O servidor não devolveu o QR Code. Verifique o fluxo no n8n.");
+                    throw new Error("O servidor não devolveu a imagem do QR Code.");
                 }
 
             } catch (err) {
                 console.error(err);
-                setStatus(err.message);
+                setStatus("Erro de conexão. Verifique se o n8n está no modo 'Listen for Test Event'.");
                 btnSubmit.innerText = "TENTAR NOVAMENTE";
                 btnSubmit.disabled = false;
             }
@@ -157,7 +144,7 @@
         function copyPixCode() {
             if (window.currentPixCode) {
                 navigator.clipboard.writeText(window.currentPixCode);
-                setStatus("Código PIX copiado!", false);
+                setStatus("Código PIX copiado com sucesso!", false);
             }
         }
     </script>
