@@ -1,66 +1,205 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estúdio Voz - Teste de Checkout</title>
+    <title>Estúdio Voz - Checkout IA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .card-checkout { background: white; border-radius: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08); }
-        .pix-zone { background-color: #f0f9ff; border: 2px dashed #bae6fd; }
+        .card-shadow { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+        .pix-container { background-color: #f0f9ff; border: 2px dashed #bae6fd; }
+        .status-box { transition: all 0.3s ease-in-out; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-6">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <div class="card-checkout w-full max-w-lg p-8 border border-gray-100">
+    <div class="bg-white w-full max-w-lg rounded-[2.5rem] card-shadow p-8 md:p-10 border border-gray-100">
+        <!-- Cabeçalho -->
         <div class="text-center mb-10">
-            <h1 class="text-3xl font-black text-gray-900 tracking-tight italic">ESTÚDIO VOZ IA</h1>
-            <p class="text-gray-500 mt-2 font-medium">Ambiente de Teste de Pagamento</p>
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight italic uppercase">ESTÚDIO VOZ IA</h1>
+            <p class="text-gray-500 mt-2 font-medium">Sua locução profissional por <span class="text-green-600 font-bold italic">R$ 10,00</span></p>
         </div>
 
-        <!-- Formulário -->
-        <form id="testForm" class="space-y-5">
+        <!-- Mensagens de Feedback -->
+        <div id="statusMessage" class="hidden mb-6 p-4 rounded-2xl text-sm font-semibold text-center animate-pulse"></div>
+
+        <!-- Formulário de Pedido -->
+        <form id="orderForm" class="space-y-5">
             <div>
-                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-widest">Texto de Teste</label>
-                <textarea id="texto" rows="3" class="w-full p-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none text-sm" placeholder="Escreva algo curto..."></textarea>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">WhatsApp</label>
-                    <input type="tel" id="whatsapp" placeholder="11999999999" class="w-full p-3 rounded-xl border border-gray-200 text-sm outline-none" required>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">CPF ou CNPJ</label>
-                    <input type="text" id="cpf" placeholder="000.000.000-00" class="w-full p-3 rounded-xl border border-gray-200 text-sm outline-none" required>
+                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest text-left ml-2">Texto da Locução</label>
+                <textarea id="texto" rows="4" class="w-full p-5 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all resize-none text-sm leading-relaxed" placeholder="Digite aqui o roteiro da sua propaganda..."></textarea>
+                <div class="flex justify-between mt-2 px-2">
+                    <span class="text-[10px] text-gray-400 font-bold uppercase"><span id="wordCount">0</span> / 120 palavras</span>
+                    <span id="limitMsg" class="hidden text-[10px] text-red-500 font-black uppercase">Limite atingido!</span>
                 </div>
             </div>
 
-            <button type="submit" id="btnSubmit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-lg transition-all active:scale-95 disabled:opacity-50 uppercase text-xs tracking-widest">
-                Gerar PIX de Teste (R$ 10,00)
+            <div class="grid grid-cols-2 gap-3">
+                <label class="relative flex items-center justify-center p-4 border-2 rounded-2xl cursor-pointer hover:bg-gray-50 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 has-[:checked]:ring-4 has-[:checked]:ring-blue-100">
+                    <input type="radio" name="voice" value="francisca" class="sr-only" checked>
+                    <span class="font-bold text-gray-800 text-sm">👩 Francisca</span>
+                </label>
+                <label class="relative flex items-center justify-center p-4 border-2 rounded-2xl cursor-pointer hover:bg-gray-50 transition-all has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 has-[:checked]:ring-4 has-[:checked]:ring-blue-100">
+                    <input type="radio" name="voice" value="carlos" class="sr-only">
+                    <span class="font-bold text-gray-800 text-sm">👨 Carlos</span>
+                </label>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 ml-2 text-left">Trilha de Fundo</label>
+                    <select id="trilha" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 text-sm font-medium outline-none">
+                        <option value="none">Voz Pura (Sem trilha)</option>
+                        <option value="trilha_varejo">Varejo (Animada)</option>
+                        <option value="trilha_emocional">Suave (Institucional)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 ml-2 text-left">Seu WhatsApp</label>
+                    <input type="tel" id="whatsapp" placeholder="(11) 99999-9999" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 text-sm font-medium outline-none" required>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 ml-2 text-left">CPF ou CNPJ (Obrigatório para PIX)</label>
+                <input type="text" id="cpf_cnpj" placeholder="000.000.000-00" class="w-full p-4 rounded-2xl border border-gray-100 bg-gray-50 text-sm font-medium outline-none" required>
+            </div>
+
+            <button type="submit" id="btnSubmit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl transition-all transform active:scale-95 disabled:opacity-50 uppercase text-xs tracking-[0.2em]">
+                Gerar Pagamento PIX
             </button>
         </form>
 
-        <!-- Área do QR Code (Escondida) -->
-        <div id="checkoutArea" class="hidden mt-8 animate-in fade-in zoom-in duration-500">
-            <div class="pix-zone p-8 rounded-3xl text-center">
-                <h3 class="text-blue-900 font-extrabold text-lg mb-6">QR Code Gerado! ✅</h3>
+        <!-- Área de Checkout do Asaas -->
+        <div id="checkoutArea" class="hidden mt-8 animate-fade-in">
+            <div class="pix-container p-8 rounded-[2rem] text-center shadow-inner">
+                <h3 class="text-blue-900 font-black text-lg mb-6 uppercase tracking-wider italic">Pagamento Gerado!</h3>
                 
-                <div class="bg-white p-3 inline-block rounded-2xl shadow-md mb-8">
-                    <img id="qrCodeImg" src="" alt="QR Code" class="w-48 h-48 rounded-lg border border-gray-50">
+                <div class="bg-white p-3 inline-block rounded-2xl shadow-xl mb-8 border border-blue-50">
+                    <img id="qrCodeDisplay" src="" alt="QR Code PIX" class="w-48 h-48 rounded-lg">
                 </div>
 
                 <div class="text-left mb-6">
-                    <label class="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Código Copia e Cola</label>
-                    <div id="payload" class="mt-2 p-4 bg-white border border-blue-100 rounded-xl text-[10px] font-mono break-all text-gray-600 leading-relaxed shadow-sm">
-                        A processar...
+                    <label class="text-[10px] font-bold text-blue-400 uppercase tracking-widest ml-1">Código Copia e Cola</label>
+                    <div id="pixText" class="mt-2 p-4 bg-white border border-blue-100 rounded-xl text-[10px] font-mono break-all text-gray-500 leading-relaxed max-h-24 overflow-y-auto">
+                        Carregando código...
                     </div>
                 </div>
 
-                <button onclick="copyToClipboard()" class="w-full bg-blue-900 text-white font-bold py-4 rounded-xl text-xs hover:bg-black transition-all shadow-lg active:scale-95">
-                    COPIAR CÓDIGO PIX
+                <button onclick="copyPixCode()" class="w-full bg-blue-900 text-white font-black py-4 rounded-2xl text-xs hover:bg-black transition-all shadow-lg active:scale-95 uppercase tracking-widest">
+                    Copiar Código PIX
+                </button>
+                
+                <p class="text-[9px] text-blue-400 mt-6 font-bold uppercase tracking-tighter">O sistema aguarda o pagamento para iniciar a gravação</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const textoArea = document.getElementById('texto');
+        const countSpan = document.getElementById('wordCount');
+        const limitMsg = document.getElementById('limitMsg');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const statusBox = document.getElementById('statusMessage');
+        const orderForm = document.getElementById('orderForm');
+        const checkoutArea = document.getElementById('checkoutArea');
+
+        // URL do seu Webhook (Teste)
+        const n8nWebhookUrl = 'https://estudio-n8n.baatq5.easypanel.host/webhook-test/novo-pedido';
+
+        // Contador de palavras e bloqueio
+        textoArea.addEventListener('input', () => {
+            const words = textoArea.value.trim().split(/\s+/).filter(w => w.length > 0);
+            countSpan.innerText = words.length;
+            
+            if (words.length > 120) {
+                textoArea.value = words.slice(0, 120).join(" ");
+                countSpan.innerText = 120;
+                limitMsg.classList.remove('hidden');
+            } else {
+                limitMsg.classList.add('hidden');
+            }
+            btnSubmit.disabled = words.length === 0;
+        });
+
+        function setStatus(msg, isError = true) {
+            statusBox.innerText = msg;
+            statusBox.className = `mb-6 p-4 rounded-2xl text-sm font-bold text-center border-2 ${
+                isError ? 'bg-red-50 text-red-600 border-red-100' : 'bg-green-50 text-green-600 border-green-100'
+            }`;
+            statusBox.classList.remove('hidden');
+        }
+
+        // Submissão do Formulário
+        orderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            btnSubmit.innerText = "CONECTANDO AO BANCO...";
+            btnSubmit.disabled = true;
+            statusBox.classList.add('hidden');
+
+            const payload = {
+                texto: textoArea.value,
+                voz: document.querySelector('input[name="voice"]:checked').value,
+                trilha: document.getElementById('trilha').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                cpf_cnpj: document.getElementById('cpf_cnpj').value
+            };
+
+            try {
+                const response = await fetch(n8nWebhookUrl, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
+                const data = await response.json();
+                console.log("Dados do n8n:", data);
+
+                // Normaliza a resposta: suporta tanto [{obj}] quanto {obj}
+                const result = Array.isArray(data) ? data[0] : data;
+
+                if (result && result.encodedImage) {
+                    orderForm.classList.add('hidden');
+                    checkoutArea.classList.remove('hidden');
+                    
+                    // Exibe a imagem Base64 do Asaas
+                    document.getElementById('qrCodeDisplay').src = `data:image/png;base64,${result.encodedImage}`;
+                    document.getElementById('pixText').innerText = result.payload;
+                    window.currentPixCode = result.payload;
+                } else {
+                    setStatus("O sistema não devolveu o QR Code. Verifique o nó 'Get QR Code' no n8n.");
+                    btnSubmit.innerText = "TENTAR NOVAMENTE";
+                    btnSubmit.disabled = false;
+                }
+
+            } catch (err) {
+                console.error("Erro no Fetch:", err);
+                setStatus("Falha na conexão. Certifique-se de que o n8n está no modo 'Listen for Test Event' e abra este ficheiro diretamente no seu navegador.");
+                btnSubmit.innerText = "TENTAR NOVAMENTE";
+                btnSubmit.disabled = false;
+            }
+        });
+
+        // Função de Copiar PIX
+        function copyPixCode() {
+            if (window.currentPixCode) {
+                const dummy = document.createElement("textarea");
+                document.body.appendChild(dummy);
+                dummy.value = window.currentPixCode;
+                dummy.select();
+                document.execCommand("copy");
+                document.body.removeChild(dummy);
+                setStatus("Código PIX copiado com sucesso!", false);
+            }
+        }
+    </script>
+</body>
+</html>                    COPIAR CÓDIGO PIX
                 </button>
                 
                 <p class="text-[9px] text-blue-400 mt-6 font-bold uppercase tracking-tighter">O n8n está à espera do seu pagamento para iniciar a gravação</p>
