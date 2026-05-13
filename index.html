@@ -136,7 +136,7 @@
 
         // URL PRINCIPAL
         const webhookPagamentoUrl = 'https://estudio-n8n.baatq5.easypanel.host/webhook/novo-pedido';
-        const webhookAIUrl = 'COLOQUE_AQUI_A_URL_DO_NOVO_WEBHOOK_DE_TEXTO_DO_N8N'; 
+        const webhookAIUrl = 'https://estudio-n8n.baatq5.easypanel.host/webhook/gerador-texto'; 
 
         function checkFormValidity() {
             const words = textoArea.value.trim().split(/\s+/).filter(w => w.length > 0);
@@ -168,11 +168,6 @@
         btnGerarAI.addEventListener('click', async () => {
             if(!aiTopicos.value.trim()) {
                 setStatus("Por favor, digite sobre o que é a propaganda (ex: Oferta de Pneus).");
-                return;
-            }
-
-            if(webhookAIUrl === 'https://estudio-n8n.baatq5.easypanel.host/webhook/gerador-texto') {
-                setStatus("Modo de Prévia: A IA não está conectada. Configure a URL do webhook no código real para funcionar.");
                 return;
             }
 
