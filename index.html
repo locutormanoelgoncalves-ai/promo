@@ -183,8 +183,7 @@
             try {
                 const response = await fetch(webhookAIUrl, {
                     method: 'POST',
-                    mode: 'cors',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ topicos: aiTopicos.value })
                 });
 
@@ -229,11 +228,7 @@
             try {
                 const response = await fetch(webhookPagamentoUrl, {
                     method: 'POST',
-                    mode: 'cors', // Adicionado para garantir a passagem
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
@@ -250,6 +245,9 @@
                     document.getElementById('qrCodeDisplay').src = `data:image/png;base64,${result.encodedImage}`;
                     document.getElementById('pixPayload').innerText = result.payload;
                     window.currentPix = result.payload;
+                } else if (data.errors || data.body?.errors) {
+                    const err = (data.errors || data.body.errors)[0];
+                    throw new Error(`Erro do Asaas: ${err.description}`);
                 } else {
                     throw new Error("O servidor n8n respondeu, mas não encontrou a imagem do QR Code. Verifique o fluxo.");
                 }
@@ -259,7 +257,7 @@
                 
                 let errorMsg = "Falha de Rede (Failed to fetch). ";
                 if(err.message.includes("Failed to fetch")) {
-                     errorMsg += "O seu navegador não conseguiu encontrar o n8n. Verifique se clicou em 'Listen for Test Event' e se o CORS está liberado (*).";
+                     errorMsg += "O seu navegador não conseguiu encontrar o n8n. Verifique se clicou em 'Listen for Test Event'.";
                 } else {
                      errorMsg = err.message;
                 }
