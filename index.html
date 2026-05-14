@@ -113,9 +113,8 @@
                 <div>
                     <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">Onde deseja receber o áudio pronto?</label>
                     <select id="forma_entrega" class="w-full p-4 rounded-xl border border-gray-200 bg-white text-sm font-medium outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer">
-                        <option value="whatsapp">Apenas no WhatsApp</option>
-                        <option value="email">Apenas no E-mail</option>
-                        <option value="ambos">No WhatsApp e no E-mail (Recomendado)</option>
+                        <option value="whatsapp">no WhatsApp</option>
+                        <option value="email">no E-mail</option>
                     </select>
                 </div>
 
@@ -130,8 +129,8 @@
 
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-gray-50 transition-colors gap-3">
                             <label class="flex items-center cursor-pointer flex-1">
-                                <!-- Envia 'alegre1' para o n8n -->
-                                <input type="radio" name="trilha" value="alegre1" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                <!-- Envia 'alegre1:mp3' para o n8n -->
+                                <input type="radio" name="trilha" value="alegre1:mp3" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
                                 <span class="ml-3 text-sm font-medium text-gray-700">Trilha Alegre 1 (Dinâmica)</span>
                             </label>
                             <audio controls preload="none" class="w-full sm:w-48" controlsList="nodownload">
@@ -141,8 +140,8 @@
 
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-gray-50 transition-colors gap-3">
                             <label class="flex items-center cursor-pointer flex-1">
-                                <!-- Envia 'alegre2' para o n8n -->
-                                <input type="radio" name="trilha" value="alegre2" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                <!-- Envia 'alegre2:mp3' para o n8n -->
+                                <input type="radio" name="trilha" value="alegre2:mp3" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
                                 <span class="ml-3 text-sm font-medium text-gray-700">Trilha Alegre 2 (Varejo)</span>
                             </label>
                             <audio controls preload="none" class="w-full sm:w-48" controlsList="nodownload">
@@ -152,8 +151,8 @@
 
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-gray-50 transition-colors gap-3">
                             <label class="flex items-center cursor-pointer flex-1">
-                                <!-- Envia 'lenta1' para o n8n -->
-                                <input type="radio" name="trilha" value="lenta1" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                <!-- Envia 'lenta1:mp3' para o n8n -->
+                                <input type="radio" name="trilha" value="lenta1:mp3" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
                                 <span class="ml-3 text-sm font-medium text-gray-700">Trilha Lenta 1 (Emocional)</span>
                             </label>
                             <audio controls preload="none" class="w-full sm:w-48" controlsList="nodownload">
@@ -163,8 +162,8 @@
 
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-gray-50 transition-colors gap-3">
                             <label class="flex items-center cursor-pointer flex-1">
-                                <!-- Envia 'lenta2' para o n8n -->
-                                <input type="radio" name="trilha" value="lenta2" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                <!-- Envia 'lenta2:mp3' para o n8n -->
+                                <input type="radio" name="trilha" value="lenta2:mp3" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
                                 <span class="ml-3 text-sm font-medium text-gray-700">Trilha Lenta 2 (Suave)</span>
                             </label>
                             <audio controls preload="none" class="w-full sm:w-48" controlsList="nodownload">
