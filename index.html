@@ -89,6 +89,17 @@
                         <option value="ambos">No WhatsApp e no E-mail (Recomendado)</option>
                     </select>
                 </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">Trilha Sonora (Fundo Musical)</label>
+                    <select id="trilha" class="w-full p-4 rounded-xl border border-gray-200 bg-white text-sm font-medium outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer">
+                        <option value="nenhuma">Somente a Voz (Sem Trilha)</option>
+                        <option value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/ALEGRE1.mp3">Trilha Alegre 1 (Dinâmica)</option>
+                        <option value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/ALEGRE2.mp3">Trilha Alegre 2 (Varejo)</option>
+                        <option value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/LENTA1.mp3">Trilha Lenta 1 (Emocional)</option>
+                        <option value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/LENTA2.mp3">Trilha Lenta 2 (Suave)</option>
+                    </select>
+                </div>
             </div>
 
             <label class="flex items-start space-x-3 cursor-pointer p-2 hover:bg-gray-50 rounded-lg transition-colors">
@@ -211,13 +222,15 @@
             btnSubmit.disabled = true;
             statusBox.classList.add('hidden');
 
+            // --- ADICIONADO A VARIÁVEL DA TRILHA AQUI ---
             const payload = {
                 texto: textoArea.value,
                 voice: 'carlos',
                 nome: document.getElementById('nome').value,
                 whatsapp: document.getElementById('whatsapp').value,
                 email: document.getElementById('email').value,
-                forma_entrega: document.getElementById('forma_entrega').value
+                forma_entrega: document.getElementById('forma_entrega').value,
+                trilha: document.getElementById('trilha').value
             };
 
             try {
