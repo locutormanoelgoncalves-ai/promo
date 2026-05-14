@@ -13,6 +13,8 @@
         .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
         .ai-gradient { background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Ajuste para os players nativos de áudio ficarem mais bonitos */
+        audio { height: 35px; outline: none; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 md:p-6">
@@ -86,18 +88,66 @@
                     <select id="forma_entrega" class="w-full p-4 rounded-xl border border-gray-200 bg-white text-sm font-medium outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer">
                         <option value="whatsapp">Apenas no WhatsApp</option>
                         <option value="email">Apenas no E-mail</option>
+                        <option value="ambos">No WhatsApp e no E-mail (Recomendado)</option>
                     </select>
                 </div>
 
+                <!-- NOVO PLAYER DE TRILHAS SONORAS -->
                 <div>
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">Trilha Sonora (Fundo Musical)</label>
-                    <select id="trilha" class="w-full p-4 rounded-xl border border-gray-200 bg-white text-sm font-medium outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer">
-                        <option value="nenhuma">Somente a Voz (Sem Trilha)</option>
-                        <option value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/ALEGRE1.mp3">Trilha Alegre 1 (Dinâmica)</option>
-                        <option value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/ALEGRE2.mp3">Trilha Alegre 2 (Varejo)</option>
-                        <option value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/LENTA1.mp3">Trilha Lenta 1 (Emocional)</option>
-                        <option value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/LENTA2.mp3">Trilha Lenta 2 (Suave)</option>
-                    </select>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">Trilha Sonora (Ouça e Escolha)</label>
+                    <div class="border border-gray-200 bg-white rounded-xl divide-y divide-gray-100 overflow-hidden shadow-sm">
+                        
+                        <!-- Sem Trilha -->
+                        <label class="flex items-center p-3 hover:bg-gray-50 cursor-pointer transition-colors">
+                            <input type="radio" name="trilha" value="nenhuma" checked class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                            <span class="ml-3 text-sm font-bold text-gray-700">Somente a Voz (Sem Trilha)</span>
+                        </label>
+
+                        <!-- Trilha Alegre 1 -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-gray-50 transition-colors gap-3">
+                            <label class="flex items-center cursor-pointer flex-1">
+                                <input type="radio" name="trilha" value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/ALEGRE1.mp3" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                <span class="ml-3 text-sm font-medium text-gray-700">Trilha Alegre 1 (Dinâmica)</span>
+                            </label>
+                            <audio controls preload="none" class="w-full sm:w-48" controlsList="nodownload">
+                                <source src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/ALEGRE1.mp3" type="audio/mpeg">
+                            </audio>
+                        </div>
+
+                        <!-- Trilha Alegre 2 -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-gray-50 transition-colors gap-3">
+                            <label class="flex items-center cursor-pointer flex-1">
+                                <input type="radio" name="trilha" value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/ALEGRE2.mp3" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                <span class="ml-3 text-sm font-medium text-gray-700">Trilha Alegre 2 (Varejo)</span>
+                            </label>
+                            <audio controls preload="none" class="w-full sm:w-48" controlsList="nodownload">
+                                <source src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/ALEGRE2.mp3" type="audio/mpeg">
+                            </audio>
+                        </div>
+
+                        <!-- Trilha Lenta 1 -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-gray-50 transition-colors gap-3">
+                            <label class="flex items-center cursor-pointer flex-1">
+                                <input type="radio" name="trilha" value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/LENTA1.mp3" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                <span class="ml-3 text-sm font-medium text-gray-700">Trilha Lenta 1 (Emocional)</span>
+                            </label>
+                            <audio controls preload="none" class="w-full sm:w-48" controlsList="nodownload">
+                                <source src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/LENTA1.mp3" type="audio/mpeg">
+                            </audio>
+                        </div>
+
+                        <!-- Trilha Lenta 2 -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-gray-50 transition-colors gap-3">
+                            <label class="flex items-center cursor-pointer flex-1">
+                                <input type="radio" name="trilha" value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/LENTA2.mp3" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                <span class="ml-3 text-sm font-medium text-gray-700">Trilha Lenta 2 (Suave)</span>
+                            </label>
+                            <audio controls preload="none" class="w-full sm:w-48" controlsList="nodownload">
+                                <source src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/LENTA2.mp3" type="audio/mpeg">
+                            </audio>
+                        </div>
+
+                    </div>
                 </div>
             </div>
 
@@ -221,7 +271,9 @@
             btnSubmit.disabled = true;
             statusBox.classList.add('hidden');
 
-            // --- ADICIONADO A VARIÁVEL DA TRILHA AQUI ---
+            // --- AQUI CAPTURAMOS QUAL BOLINHA DA TRILHA FOI MARCADA ---
+            const trilhaEscolhida = document.querySelector('input[name="trilha"]:checked').value;
+
             const payload = {
                 texto: textoArea.value,
                 voice: 'carlos',
@@ -229,7 +281,7 @@
                 whatsapp: document.getElementById('whatsapp').value,
                 email: document.getElementById('email').value,
                 forma_entrega: document.getElementById('forma_entrega').value,
-                trilha: document.getElementById('trilha').value
+                trilha: trilhaEscolhida
             };
 
             try {
@@ -281,6 +333,25 @@
                 setStatus("Código PIX copiado com sucesso! Abra o app do seu banco.", false);
             }
         }
+
+        // --- SISTEMA INTELIGENTE DE ÁUDIO (UX) ---
+        const audios = document.querySelectorAll('audio');
+        audios.forEach(audio => {
+            audio.addEventListener('play', () => {
+                // Pausa os outros áudios
+                audios.forEach(outroAudio => {
+                    if (outroAudio !== audio) {
+                        outroAudio.pause();
+                    }
+                });
+                
+                // Marca a bolinha (radio) da música que ele deu play automaticamente
+                const radioElement = audio.parentElement.querySelector('input[type="radio"]');
+                if(radioElement) {
+                    radioElement.checked = true;
+                }
+            });
+        });
     </script>
 </body>
 </html>
