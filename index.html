@@ -29,6 +29,33 @@
         <div id="statusBox" class="hidden mb-6 p-4 rounded-2xl text-xs font-bold text-center border-2 shadow-sm"></div>
 
         <form id="mainForm" class="space-y-6">
+
+            <!-- NOVA SEÇÃO DE DEMONSTRATIVOS DO LOCUTOR -->
+            <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 md:p-5 shadow-sm">
+                <h3 class="text-xs font-bold text-blue-900 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <span>🎙️</span> Conheça a Voz do Locutor (Carlos)
+                </h3>
+                <div class="space-y-2">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-2.5 rounded-xl border border-blue-50 gap-2 shadow-sm">
+                        <span class="text-xs font-bold text-gray-600 ml-2">▶️ Demonstrativo 1</span>
+                        <audio controls preload="none" class="w-full sm:w-48" controlsList="nodownload">
+                            <source src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/demo1.mp3" type="audio/mpeg">
+                        </audio>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-2.5 rounded-xl border border-blue-50 gap-2 shadow-sm">
+                        <span class="text-xs font-bold text-gray-600 ml-2">▶️ Demonstrativo 2</span>
+                        <audio controls preload="none" class="w-full sm:w-48" controlsList="nodownload">
+                            <source src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/demo2.mp3" type="audio/mpeg">
+                        </audio>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-2.5 rounded-xl border border-blue-50 gap-2 shadow-sm">
+                        <span class="text-xs font-bold text-gray-600 ml-2">▶️ Demonstrativo 3</span>
+                        <audio controls preload="none" class="w-full sm:w-48" controlsList="nodownload">
+                            <source src="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/carlos.mp3" type="audio/mpeg">
+                        </audio>
+                    </div>
+                </div>
+            </div>
             
             <div class="ai-gradient border border-purple-200 rounded-2xl p-4 md:p-5 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
@@ -92,18 +119,15 @@
                     </select>
                 </div>
 
-                <!-- NOVO PLAYER DE TRILHAS SONORAS -->
                 <div>
                     <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">Trilha Sonora (Ouça e Escolha)</label>
                     <div class="border border-gray-200 bg-white rounded-xl divide-y divide-gray-100 overflow-hidden shadow-sm">
                         
-                        <!-- Sem Trilha -->
                         <label class="flex items-center p-3 hover:bg-gray-50 cursor-pointer transition-colors">
                             <input type="radio" name="trilha" value="nenhuma" checked class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
                             <span class="ml-3 text-sm font-bold text-gray-700">Somente a Voz (Sem Trilha)</span>
                         </label>
 
-                        <!-- Trilha Alegre 1 -->
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-gray-50 transition-colors gap-3">
                             <label class="flex items-center cursor-pointer flex-1">
                                 <input type="radio" name="trilha" value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/ALEGRE1.mp3" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
@@ -114,7 +138,6 @@
                             </audio>
                         </div>
 
-                        <!-- Trilha Alegre 2 -->
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-gray-50 transition-colors gap-3">
                             <label class="flex items-center cursor-pointer flex-1">
                                 <input type="radio" name="trilha" value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/ALEGRE2.mp3" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
@@ -125,7 +148,6 @@
                             </audio>
                         </div>
 
-                        <!-- Trilha Lenta 1 -->
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-gray-50 transition-colors gap-3">
                             <label class="flex items-center cursor-pointer flex-1">
                                 <input type="radio" name="trilha" value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/LENTA1.mp3" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
@@ -136,7 +158,6 @@
                             </audio>
                         </div>
 
-                        <!-- Trilha Lenta 2 -->
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 hover:bg-gray-50 transition-colors gap-3">
                             <label class="flex items-center cursor-pointer flex-1">
                                 <input type="radio" name="trilha" value="https://sites-manoelgoncalves.baatq5.easypanel.host/wp-content/uploads/2026/05/LENTA2.mp3" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
@@ -271,7 +292,6 @@
             btnSubmit.disabled = true;
             statusBox.classList.add('hidden');
 
-            // --- AQUI CAPTURAMOS QUAL BOLINHA DA TRILHA FOI MARCADA ---
             const trilhaEscolhida = document.querySelector('input[name="trilha"]:checked').value;
 
             const payload = {
@@ -345,7 +365,7 @@
                     }
                 });
                 
-                // Marca a bolinha (radio) da música que ele deu play automaticamente
+                // Marca a bolinha (radio) da música que ele deu play automaticamente, se houver
                 const radioElement = audio.parentElement.querySelector('input[type="radio"]');
                 if(radioElement) {
                     radioElement.checked = true;
